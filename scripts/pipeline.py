@@ -1,5 +1,6 @@
 import requests
 import pandas as pd
+import sqlite3
 
 URL_ = "https://api.open-meteo.com/v1/forecast"
 PARAMETROS = {
@@ -49,7 +50,12 @@ def exportar_csv(df, ruta="../data/datos_clima_cdmx.csv"):
     df.to_csv(ruta, index=False)
     print(f"CSV exportado: {ruta} ({len(df)} registros)")
 
-
+def cargar_sqlite(csv_path="../data/datos_clima_cdmx.csv", db_path="../data/clima_cdmx.db"):
+    df = pd.read_csv(csv_path)
+    conn = sqlite3.connect(db_path)
+    df.to_sql("clima", conn, if_exists="replace", index=False)
+    print(f"Datos cargados en SQLite: {len(df)} registros")
+    conn.close()
 
 def main():
 
@@ -61,5 +67,7 @@ def main():
         print("LIMPIO")
         exportar_csv(df)
         print("EXPORTADO")
+
+        cargar_sqlite()
 
 main()

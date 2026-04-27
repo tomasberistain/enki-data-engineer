@@ -2,6 +2,8 @@ import requests
 import pandas as pd
 import sqlite3
 
+
+#DEFINICIÓN DE PARAMETROS
 URL_ = "https://api.open-meteo.com/v1/forecast"
 PARAMETROS = {
     'latitude': 19.43,
@@ -11,6 +13,8 @@ PARAMETROS = {
     "forecast_days": 0
 }
 
+#FUNCION QUE REALIZA LA EXTRACCIÓN DE LOS DATOS A PARTIR DE LLAMADA A LA API
+#MANEJO DE ERRORES USANDO TRY EXCEPT
 def extraccion():
     try:
         response = requests.get(URL_, params=PARAMETROS, timeout=10)
@@ -31,7 +35,9 @@ def extraccion():
         print("ERROR: la API tardó demasiado en responder.")
         return None
 
-
+#FUNCION QUE TRANSFORMA LOS DATOS
+#TRANSFORMACION DE LOS NOMBRES DE COLUMNAS, FORMATO DE FECHA, RANGO DE HORA
+#REVISIÓN DE REGISTROS NULOS Y NEGATIVOS
 def transformacion_limpieza(hourly):
 
     df = pd.DataFrame({
@@ -46,16 +52,20 @@ def transformacion_limpieza(hourly):
 
     nulos = df[["temperatura_c","precipitacion_mm"]].isnull().any(axis=1).sum()
     negativos = (df[["temperatura_c", "precipitacion_mm"]]<0).any(axis=1).sum()
-    print(f"Registros con al menos un nulo: {nulos}")
-    print(f"Registros con al menos un negativo: {negativos}")
+    print(f"Nulos (registros que tienen al menos un nulo): {nulos}")
+    print(f"Negativos (registros que tienen al menos un negativo): {negativos}")
 
     return df
 
-
+#FUNCION QUE EXPORTA EL DF EN UN CSV
 def exportar_csv(df, ruta="../data/datos_clima_cdmx.csv"):
     df.to_csv(ruta, index=False)
     print(f"CSV exportado: {ruta} ({len(df)} registros)")
 
+
+#FUNCIONES PARA LA EJECUCION DE SQL
+
+#FUNCION QUE CARGA EL CSV EN SQLITE
 def cargar_sqlite(csv_path="../data/datos_clima_cdmx.csv", db_path="../data/clima_cdmx.db"):
     df = pd.read_csv(csv_path)
     conn = sqlite3.connect(db_path)
@@ -63,17 +73,18 @@ def cargar_sqlite(csv_path="../data/datos_clima_cdmx.csv", db_path="../data/clim
     print(f"Datos cargados en SQLite: {len(df)} registros")
     conn.close()
 
-
+#FUNCION QUE EJECUTA LAS CONSULTAS DESDE EL .SQL
+#CONSULTAS SEPARADAS POR EL DELIMITADOR --, TERMINADAS EN ;
 def ejecutar_consultas(db_path="../data/clima_cdmx.db", sql_path="../sql/consultas.sql"):
     with open(sql_path, "r", encoding="utf-8") as f:
         contenido = f.read()
 
-    # Separar consultas por el delimitador --
+    # DELIMITADOR -- SEPARA LAS CONSULTAS
     bloques = [b.strip() for b in contenido.split(";") if b.strip()]
 
     conn = sqlite3.connect(db_path)
     for bloque in bloques:
-        # Extraer nombre de la consulta del comentario
+        # NOMBRE DE LA CONSULTA DESDE EL COMENTARIO
         lineas = bloque.strip().splitlines()
         nombre = lineas[0].replace("--", "").strip() if lineas[0].startswith("--") else "Consulta"
         print(f"\n--- {nombre} ---")
@@ -84,10 +95,7 @@ def ejecutar_consultas(db_path="../data/clima_cdmx.db", sql_path="../sql/consult
     conn.close()
 
 
-
-
-
-
+#FUNCION MAIN QUE ORQUESTA LA EJECUCIÓN DEL SCRIPT
 def main():
 
     datos = extraccion()

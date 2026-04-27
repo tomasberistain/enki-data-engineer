@@ -25,6 +25,5 @@ para análisis de movilidad urbana, que es el contexto del caso.
 ## ¿Qué mejoraría con más tiempo?
 
 - Parametrizar fechas y coordenadas via argumentos de línea de comandos
-- Agregar logging estructurado en lugar de prints
 - Escribir pruebas unitarias para las funciones de limpieza
 - Orquestar el pipeline con Airflow para ejecución programada

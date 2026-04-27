@@ -1,4 +1,4 @@
--- Consulta A: Temperatura promedio por día (de más caluroso a más frío)
+-- Consulta A: Temperatura promedio por día (orden: del más caluroso al más frío [DESC])
 
 SELECT 
 	DATE(fecha) AS dia,
@@ -9,7 +9,7 @@ ORDER BY temp_promedio DESC;
 
 
 
--- Consulta B: Horas con precipitación mayor a 0 mm
+-- Consulta B: Horas con precipitación mayor a 0 mm, ordenadas cronológicamente [fecha ASC]
 
 SELECT 
     DATE(fecha) AS dia,
@@ -21,7 +21,7 @@ ORDER BY fecha ASC;
 
 
 
--- Consulta C: Día con mayor variación térmica
+-- Consulta C: Día con mayor variación térmica 
 
 SELECT 
     DATE(fecha) AS dia,

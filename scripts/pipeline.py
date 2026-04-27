@@ -13,7 +13,7 @@ PARAMETROS = {
 
 def extraccion():
     try:
-        response = requests.get(URL_, params=PARAMETROS)
+        response = requests.get(URL, params=PARAMS, timeout=10)
         response.raise_for_status()
         data = response.json()
         hourly = data["hourly"]
@@ -23,6 +23,9 @@ def extraccion():
         return None
     except requests.exceptions.HTTPError as e:
         print(f"ERROR HTTP: {e}")
+        return None
+    except requests.exceptions.Timeout:
+        print("ERROR: la API tardó demasiado en responder.")
         return None
 
 

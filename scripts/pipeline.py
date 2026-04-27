@@ -16,6 +16,9 @@ def extraccion():
         response = requests.get(URL_, params=PARAMETROS, timeout=10)
         response.raise_for_status()
         data = response.json()
+        if "hourly" not in data:
+            print(f"ERROR: respuesta inesperada de la API: {data}")
+            return None
         hourly = data["hourly"]
         return hourly
     except requests.exceptions.ConnectionError:
@@ -41,10 +44,10 @@ def transformacion_limpieza(hourly):
     df = df[df["fecha"].dt.hour.between(6,22)]
 
 
-    nulos = df[["temperatura_c","precipitacion_mm"]].isnull().sum().sum()
-    negativo = (df[["temperatura_c", "precipitacion_mm"]]<0).sum().sum()
-    print(f"Nulos: {nulos}")
-    print(f"Negativos: {negativo}")
+    nulos = df[["temperatura_c","precipitacion_mm"]].isnull().any(axis=1).sum()
+    negativos = (df[["temperatura_c", "precipitacion_mm"]]<0).any(axis=1).sum()
+    print(f"Registros con al menos un nulo: {nulos}")
+    print(f"Registros con al menos un negativo: {negativos}")
 
     return df
 

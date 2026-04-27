@@ -10,16 +10,16 @@ API Open-Meteo → Extracción (requests) → Limpieza (pandas) → CSV → SQLi
 
 ## La estructura de las carpetas del repositorio es:
 
-enki-data-engineer/
-├── data/                   * CSV y base de datos SQLite (generados al correr el pipeline)
-├── scripts/
-│   └── pipeline.py         * script principal: extracción, limpieza, carga y análisis
-├── sql/
-│   └── consultas.sql       * consultas SQL 
-├── docs/
-│   └── decisiones.md       * decisiones técnicas y mejoras propuestas
-├── requirements.txt
-└── README.md
+	enki-data-engineer/
+	├── data/                   * CSV y base de datos SQLite (generados al correr el pipeline)
+	├── scripts/
+	│   └── pipeline.py         * script principal: extracción, limpieza, carga y análisis
+	├── sql/
+	│   └── consultas.sql       * consultas SQL 
+	├── docs/
+	│   └── decisiones.md       * decisiones técnicas y mejoras propuestas
+	├── requirements.txt
+	└── README.md
 
 ## Sobre los requisitos
 
@@ -28,15 +28,15 @@ enki-data-engineer/
 
 ## Sobre la instalación
 
-bash
-git clone https://github.com/tomasberistain/enki-data-engineer.git
-cd enki-data-engineer
-pip install -r requirements.txt
+	bash
+	git clone https://github.com/tomasberistain/enki-data-engineer.git
+	cd enki-data-engineer
+	pip install -r requirements.txt
 
 ## Uso
 
-bash
-python scripts/pipeline.py
+	bash
+	python scripts/pipeline.py
 
 El script genera automáticamente:
 - data/datos_clima_cdmx.csv  

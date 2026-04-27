@@ -5,15 +5,15 @@
 El pipeline de datos está orquestado en el script `scripts/pipeline.py`, que implementa
 el pipeline en tres etapas:
 
-	** extracción 
+	- extracción 
 		extrae datos horarios de temperatura y precipitación de la API pública Open-Meteo 
 		para la CDMX.
 		
-	**	transformación
+	-	transformación
 		limpia los datos y los  transforma con pandas (conversión de fechas, filtrado
 		por rango de horario, detección de nulos y negativos [estos se imprimen en pantalla]).
 		
-	** exportación
+	- exportación
 		exporta a CSV y a una base de datos SQLite local sobre la cual se ejecutan 
 		cuatro consultas de análisis.
 
@@ -26,13 +26,16 @@ Es el archivo SQL desde donde se lee las consultas directamente.
 **Consulta A: temperatura promedio por día**
 	agrupa por día calendario y promedia la temperatura. Se ordena DESC para 
 	ver primero los días más calurosos.
+	
 **Consulta B: horas con precipitación**
 	filtra únicamente las horas donde llovió (precipitacion_mm > 0) y las 
 	ordena cronológicamente [ASC en fecha]. Si no llovió en el periodo, el 
 	resultado es vacío (también es información).
+	
 **Consulta C: variación térmica**
 	calcula la diferencia entre máxima y mínima por día. Se usa LIMIT 1 para 
 	devolver únicamente el día que tuvo la mayor oscilación.
+	
 **Consulta D: resumen diario**
 	en una sola consulta se encuentran los cuatro indicadores por día: 
 	mínima, máxima, promedio y precipitación acumulada.

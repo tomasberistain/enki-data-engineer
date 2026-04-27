@@ -5,7 +5,7 @@ import sqlite3
 URL_ = "https://api.open-meteo.com/v1/forecast"
 PARAMETROS = {
     'latitude': 19.43,
-    'longitude': -99-13,
+    'longitude': -99.13,
     "hourly": "temperature_2m,precipitation",
     "past_days": 7,
     "forecast_days": 0

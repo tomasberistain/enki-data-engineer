@@ -13,7 +13,7 @@ PARAMETROS = {
 
 def extraccion():
     try:
-        response = requests.get(URL, params=PARAMS, timeout=10)
+        response = requests.get(URL_, params=PARAMETROS, timeout=10)
         response.raise_for_status()
         data = response.json()
         hourly = data["hourly"]

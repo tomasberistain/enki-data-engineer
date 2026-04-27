@@ -61,32 +61,20 @@ def cargar_sqlite(csv_path="../data/datos_clima_cdmx.csv", db_path="../data/clim
     conn.close()
 
 
-def ejecutar_consultas(db_path="../data/clima_cdmx.db"):
+def ejecutar_consultas(db_path="../data/clima_cdmx.db", sql_path="../sql/consultas.sql"):
+    with open(sql_path, "r", encoding="utf-8") as f:
+        contenido = f.read()
+
+    # Separar consultas por el delimitador --
+    bloques = [b.strip() for b in contenido.split(";") if b.strip()]
+
     conn = sqlite3.connect(db_path)
-
-    consultas = {
-        "A - Temperatura promedio por día": """
-            SELECT DATE(fecha) AS dia, ROUND(AVG(temperatura_c), 2) AS temp_promedio
-            FROM clima GROUP BY DATE(fecha) ORDER BY temp_promedio DESC
-        """,
-        "B - Horas con precipitación > 0": """
-            SELECT DATE(fecha) AS dia, TIME(fecha) AS hora, precipitacion_mm
-            FROM clima WHERE precipitacion_mm > 0 ORDER BY fecha ASC
-        """,
-        "C - Día con mayor variación térmica": """
-            SELECT DATE(fecha) AS dia, ROUND(MAX(temperatura_c) - MIN(temperatura_c), 2) AS variacion_termica
-            FROM clima GROUP BY DATE(fecha) ORDER BY variacion_termica DESC LIMIT 1
-        """,
-        "D - Resumen diario": """
-            SELECT DATE(fecha) AS dia, ROUND(MIN(temperatura_c), 2) AS temp_minima,
-            ROUND(MAX(temperatura_c), 2) AS temp_maxima, ROUND(AVG(temperatura_c), 2) AS temp_promedio,
-            ROUND(SUM(precipitacion_mm), 2) AS precipitacion_total
-            FROM clima GROUP BY DATE(fecha) ORDER BY dia ASC
-        """
-    }
-
-    for nombre, query in consultas.items():
+    for bloque in bloques:
+        # Extraer nombre de la consulta del comentario
+        lineas = bloque.strip().splitlines()
+        nombre = lineas[0].replace("--", "").strip() if lineas[0].startswith("--") else "Consulta"
         print(f"\n--- {nombre} ---")
+        query = "\n".join(lineas[1:]).strip()
         df = pd.read_sql_query(query, conn)
         print(df.to_string(index=False))
 
@@ -101,13 +89,8 @@ def main():
 
     datos = extraccion()
     if datos:
-        print("EXTRAIDO")
         df = transformacion_limpieza(datos)
-        print(df.head())
-        print("LIMPIO")
         exportar_csv(df)
-        print("EXPORTADO")
-
         cargar_sqlite()
         ejecutar_consultas()
 
